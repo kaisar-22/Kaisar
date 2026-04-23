@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>🔒 SISTEM TERKUNCI 🔒</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            background: black;
+            font-family: 'Courier New', monospace;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .virus-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 20%, #0a0505, #000);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            animation: bgPulse 0.2s infinite alternate;
+            z-index: 1000;
+        }
+
+        @keyframes bgPulse {
+            0% { background-color: #0a0000; }
+            100% { background-color: #3a0000; }
+        }
+
+        .glitch {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ff4444;
+            text-shadow: 3px 3px 0 #aa0000, -2px -2px 0 #ff8888;
+            animation: textShake 0.08s infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes textShake {
+            0% { transform: translate(0,0); }
+            25% { transform: translate(3px,-1px); }
+            50% { transform: translate(-3px,2px); }
+            75% { transform: translate(2px,1px); }
+            100% { transform: translate(0,0); }
+        }
+
+        .virus-name {
+            font-size: 1.1rem;
+            color: #ff6666;
+            background: #1a0000aa;
+            padding: 8px 16px;
+            border-radius: 30px;
+            border-left: 3px solid red;
+            margin-bottom: 20px;
+        }
+
+        .lock-icon {
+            font-size: 5rem;
+            filter: drop-shadow(0 0 20px red);
+            animation: iconPulse 0.4s infinite alternate;
+            margin: 15px 0;
+        }
+
+        @keyframes iconPulse {
+            from { transform: scale(1); text-shadow: 0 0 5px red; }
+            to { transform: scale(1.15); text-shadow: 0 0 30px #ff3300; }
+        }
+
+        .message-box {
+            background: #000000cc;
+            backdrop-filter: blur(12px);
+            border: 2px solid #ff0000;
+            border-radius: 30px;
+            padding: 1.5rem;
+            max-width: 450px;
+            width: 90%;
+            margin: 15px auto;
+            box-shadow: 0 0 60px rgba(255,0,0,0.6);
+        }
+
+        .mock-text {
+            color: #ffaaaa;
+            font-size: 1.2rem;
+            font-weight: bold;
+            background: #1a0000;
+            padding: 12px;
+            border-radius: 20px;
+            margin-bottom: 15px;
+        }
+
+        .pin-area {
+            margin: 15px 0;
+        }
+
+        .pin-display {
+            background: #0a0a0a;
+            border: 2px solid #ff4444;
+            border-radius: 50px;
+            padding: 10px;
+            font-size: 1.8rem;
+            letter-spacing: 12px;
+            font-family: monospace;
+            color: #ff6666;
+            width: 80%;
+            margin: 0 auto;
+        }
+
+        .pin-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            max-width: 260px;
+            margin: 20px auto;
+        }
+
+        .pin-btn {
+            background: #1a1a1a;
+            border: 1px solid #ff4444;
+            color: #ff8888;
+            font-size: 1.6rem;
+            font-weight: bold;
+            padding: 12px;
+            border-radius: 60px;
+            cursor: pointer;
+            transition: 0.05s linear;
+        }
+
+        .pin-btn:active {
+            background: #660000;
+            transform: scale(0.95);
+        }
+
+        .error-msg {
+            color: #ff8888;
+            font-size: 0.8rem;
+            margin-top: 10px;
+            background: #2a0000;
+            padding: 6px;
+            border-radius: 20px;
+        }
+
+        .small-note {
+            font-size: 0.65rem;
+            color: #aa5555;
+            margin-top: 20px;
+            background: #000000aa;
+            padding: 5px 10px;
+            border-radius: 15px;
+        }
+
+        .success-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0a2a0a, #000);
+            z-index: 2000;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .success-box {
+            font-size: 1.4rem;
+            color: #ffcc00;
+            background: #000000aa;
+            padding: 25px;
+            border-radius: 30px;
+            border: 2px solid #ffcc00;
+            animation: glow 1s infinite;
+        }
+
+        @keyframes glow {
+            0% { box-shadow: 0 0 0 0 #ffcc00; }
+            100% { box-shadow: 0 0 20px 5px #ffcc00; }
+        }
+
+        button {
+            background: #ffcc00;
+            color: black;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-weight: bold;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="virus-container" id="virusScreen">
+    <div class="lock-icon">🔒⚠️💀</div>
+    <div class="glitch">!!! PERANGKAT TERKUNCI PERMANEN !!!</div>
+    <div class="virus-name">🔴 VIRUS KSR V1.3 | developer: KAISAR 🥵</div>
+    
+    <div class="message-box">
+        <div class="mock-text">
+            WKWKWK, HP LU GUA KUNCI PERMANEN WKWKWK<br>
+            LU JELEK BODOH 😂😂🤣
+        </div>
+        
+        <div class="pin-area">
+            <div class="pin-display" id="pinDisplay">____</div>
+            <div class="pin-buttons" id="pinButtons">
+                <div class="pin-btn" data-num="1">1</div>
+                <div class="pin-btn" data-num="2">2</div>
+                <div class="pin-btn" data-num="3">3</div>
+                <div class="pin-btn" data-num="4">4</div>
+                <div class="pin-btn" data-num="5">5</div>
+                <div class="pin-btn" data-num="6">6</div>
+                <div class="pin-btn" data-num="7">7</div>
+                <div class="pin-btn" data-num="8">8</div>
+                <div class="pin-btn" data-num="9">9</div>
+                <div class="pin-btn" data-num="clear">C</div>
+                <div class="pin-btn" data-num="0">0</div>
+                <div class="pin-btn" data-num="enter">↵</div>
+            </div>
+            <div id="errorMsg" class="error-msg"></div>
+        </div>
+    </div>
+    <div class="small-note">🔐 Masukkan Kode 1111 untuk membuka</div>
+</div>
+
+<div class="success-overlay" id="successScreen">
+    <div class="success-box">
+        🎉 SELAMAT! ANDA KENA PRANK VIRUS DARI KAISAR 🎉<br><br>
+        😂😂🤣 WKWKWK! HP LU GAK BENERAN DIKUNCI!<br>
+        INI CUMA PRANK! 😈<br><br>
+        <button id="closeBtn">TUTUP & REFRESH</button>
+        <button id="stopSoundBtn" style="background:#2a6a2a; margin-left:10px;">🔇 HENTIKAN SUARA</button>
+    </div>
+</div>
+
+<script>
+    (function() {
+        const UNLOCK_CODE = "1111";
+        let enteredCode = "";
+        let isUnlocked = false;
+        
+        const virusScreen = document.getElementById("virusScreen");
+        const successScreen = document.getElementById("successScreen");
+        const pinDisplay = document.getElementById("pinDisplay");
+        const errorMsgDiv = document.getElementById("errorMsg");
+        const closeBtn = document.getElementById("closeBtn");
+        const stopSoundBtn = document.getElementById("stopSoundBtn");
+        
+        // ======================== SUARA MALWARE (KERAS) ========================
+        let audioCtx = null;
+        let malwareInterval = null;
+        let isMalwarePlaying = false;
+        let speechInterval = null;
+        let speechQueue = [];
+        
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            return audioCtx;
+        }
+        
+        function startMalwareSound() {
+            if (isMalwarePlaying) return;
+            const ctx = initAudio();
+            if (ctx.state !== 'running') {
+                ctx.resume().then(() => startMalwareLoop()).catch(e => console.log);
+            } else {
+                startMalwareLoop();
+            }
+        }
+        
+        function startMalwareLoop() {
+            if (isMalwarePlaying) return;
+            isMalwarePlaying = true;
+            const ctx = audioCtx;
+            
+            function playScary() {
+                if (!isMalwarePlaying) return;
+                const now = ctx.currentTime;
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.value = 70 + Math.random() * 60;
+                gain.gain.value = 0.55;
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.6);
+                osc.stop(now + 0.6);
+                
+                if (Math.random() > 0.7) {
+                    const noise = ctx.createOscillator();
+                    const noiseGain = ctx.createGain();
+                    noise.type = 'square';
+                    noise.frequency.value = 50 + Math.random() * 80;
+                    noiseGain.gain.value = 0.2;
+                    noise.connect(noiseGain);
+                    noiseGain.connect(ctx.destination);
+                    noise.start();
+                    noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.3);
+                    noise.stop(now + 0.3);
+                }
+            }
+            
+            playScary();
+            malwareInterval = setInterval(() => {
+                if (isMalwarePlaying) playScary();
+            }, 800);
+        }
+        
+        function stopMalwareSound() {
+            if (malwareInterval) {
+                clearInterval(malwareInterval);
+                malwareInterval = null;
+            }
+            isMalwarePlaying = false;
+        }
+        
+        // ======================== SUARA "YOU ARE AN IDIOT" 9 KALI + LOOP 5x PER DETIK ========================
+        let speechActive = false;
+        
+        function speakText(text, volume = 1) {
+            if (!window.speechSynthesis) return;
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-US';
+            utterance.rate = 1.0;
+            utterance.pitch = 1.2;
+            utterance.volume = volume;
+            window.speechSynthesis.speak(utterance);
+        }
+        
+        function playIdiotSequence() {
+            if (speechActive) return;
+            speechActive = true;
+            
+            // Step 1: "YOU ARE AN IDIOT" diulang 9 kali dengan jeda 0.6 detik antar pengucapan
+            let count = 0;
+            const interval9 = setInterval(() => {
+                if (count >= 9 || isUnlocked) {
+                    clearInterval(interval9);
+                    // Setelah 9 kali selesai, mulai loop cepat 5x per detik (setiap 200ms)
+                    if (!isUnlocked) {
+                        startFastLoop();
+                    } else {
+                        speechActive = false;
+                    }
+                    return;
+                }
+                speakText("YOU ARE AN IDIOT", 1);
+                count++;
+            }, 600);
+            
+            // Simpan interval agar bisa dihentikan
+            window.idiotInterval9 = interval9;
+        }
+        
+        function startFastLoop() {
+            if (isUnlocked) return;
+            // Loop setiap 200ms (5x per detik) mengucapkan "HAHAHA... YOU ARE AN IDIOT"
+            speechInterval = setInterval(() => {
+                if (isUnlocked) {
+                    stopFastLoop();
+                    return;
+                }
+                const longLaugh = "HAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHA HAHAHAHAHAHAHAHA YOU ARE AN IDIOT";
+                speakText(longLaugh, 1);
+            }, 200);
+        }
+        
+        function stopFastLoop() {
+            if (speechInterval) {
+                clearInterval(speechInterval);
+                speechInterval = null;
+            }
+            if (window.idiotInterval9) {
+                clearInterval(window.idiotInterval9);
+                window.idiotInterval9 = null;
+            }
+            if (window.speechSynthesis) {
+                window.speechSynthesis.cancel();
+            }
+            speechActive = false;
+        }
+        
+        function stopAllSpeech() {
+            stopFastLoop();
+            if (window.speechSynthesis) window.speechSynthesis.cancel();
+            speechActive = false;
+        }
+        
+        function playErrorBeep() {
+            try {
+                const ctx = initAudio();
+                if (ctx.state !== 'running') ctx.resume();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.value = 880;
+                gain.gain.value = 0.5;
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.2);
+                osc.stop(ctx.currentTime + 0.2);
+            } catch(e) {}
+        }
+        
+        // ======================== LOGIC KODE ========================
+        function updateDisplay() {
+            let display = enteredCode.padEnd(4, '_');
+            pinDisplay.innerText = display;
+        }
+        
+        function showError(msg) {
+            errorMsgDiv.innerText = msg;
+            setTimeout(() => {
+                if (errorMsgDiv.innerText === msg) errorMsgDiv.innerText = "";
+            }, 2000);
+        }
+        
+        function handleInput(num) {
+            if (isUnlocked) return;
+            
+            if (num === 'clear') {
+                enteredCode = "";
+                updateDisplay();
+                return;
+            }
+            if (num === 'enter') {
+                if (enteredCode === UNLOCK_CODE) {
+                    isUnlocked = true;
+                    stopMalwareSound();
+                    stopAllSpeech();
+                    virusScreen.style.display = "none";
+                    successScreen.style.display = "flex";
+                } else {
+                    showError("❌ KODE SALAH! PERCOBAAN GAGAL ❌");
+                    enteredCode = "";
+                    updateDisplay();
+                    playErrorBeep();
+                    virusScreen.style.transform = "translateX(4px)";
+                    setTimeout(() => virusScreen.style.transform = "", 150);
+                }
+                return;
+            }
+            if (enteredCode.length < 4) {
+                enteredCode += num;
+                updateDisplay();
+            } else {
+                showError("Maksimal 4 digit. Tekan C lalu coba lagi.");
+            }
+        }
+        
+        // ======================== EVENT ========================
+        const btns = document.querySelectorAll('.pin-btn');
+        btns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const val = btn.getAttribute('data-num');
+                handleInput(val);
+                if (!isMalwarePlaying && !isUnlocked) {
+                    startMalwareSound();
+                }
+            });
+        });
+        
+        closeBtn.addEventListener('click', () => {
+            location.reload();
+        });
+        
+        stopSoundBtn.addEventListener('click', () => {
+            stopMalwareSound();
+            stopAllSpeech();
+            stopSoundBtn.innerText = "🔇 SUARA DIHENTIKAN";
+            setTimeout(() => {
+                if (stopSoundBtn) stopSoundBtn.innerText = "🔇 HENTIKAN SUARA";
+            }, 2000);
+        });
+        
+        // ======================== INISIALISASI SUARA (perlu interaksi) ========================
+        let interacted = false;
+        function onFirstInteraction() {
+            if (interacted) return;
+            interacted = true;
+            startMalwareSound();
+            playIdiotSequence(); // mulai 9x "YOU ARE AN IDIOT" lalu loop cepat
+            document.removeEventListener('click', onFirstInteraction);
+            document.removeEventListener('touchstart', onFirstInteraction);
+        }
+        document.addEventListener('click', onFirstInteraction);
+        document.addEventListener('touchstart', onFirstInteraction);
+        
+        // ======================== PENCEGAHAN KELUAR TANPA KODE (konfirmasi) ========================
+        window.addEventListener('beforeunload', function(e) {
+            if (!isUnlocked) {
+                e.preventDefault();
+                e.returnValue = '⚠️ PERANGKAT MASIH TERKUNCI! Masukkan kode 1111 terlebih dahulu. (Ini hanya prank)';
+                return '⚠️ PERANGKAT MASIH TERKUNCI! Masukkan kode 1111 terlebih dahulu. (Ini hanya prank)';
+            }
+        });
+        
+        // Mencegah tombol back (popstate)
+        history.pushState(null, null, location.href);
+        window.addEventListener('popstate', function() {
+            if (!isUnlocked) {
+                history.pushState(null, null, location.href);
+            }
+        });
+        
+        // Blokir inspect sederhana
+        document.addEventListener('contextmenu', (e) => e.preventDefault());
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I') || (e.ctrlKey && e.key === 'u')) {
+                e.preventDefault();
+            }
+            if (!isUnlocked && (e.key === 'F5' || (e.ctrlKey && e.key === 'r') || (e.ctrlKey && e.key === 'R'))) {
+                e.preventDefault();
+                showError("⛔ TIDAK BISA REFRESH! Masukkan kode terlebih dahulu!");
+            }
+        });
+        
+        // Ubah judul berkedip
+        setInterval(() => {
+            if (!isUnlocked) document.title = "🔒 TERKUNCI 🔒 VIRUS KSR";
+            else document.title = "🎉 PRANK VIRUS KAISAR 🎉";
+        }, 1000);
+        
+        console.log("%c⚠️ SIMULASI PRANK VIRUS - SUARA IDIOT 9x + LOOP 5x/detik - 100% AMAN ⚠️", "color: red; font-size: 14px");
+        console.log("Kode rahasia: 1111");
+    })();
+</script>
+</body>
+</html>
